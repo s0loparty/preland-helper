@@ -22,11 +22,12 @@ form.addEventListener('submit', ev => {
 		const domElement = strToDom(img)
 		console.log('domElement: ', domElement);
 
+		if (domElement.src.split('.').pop().indexOf('svg') !== -1) return
 		if (domElement.dataset.meowmeow) return
 		domElement.dataset.meowmeow = true
 
 		const src = domElement.getAttribute('src')
-		let stringAttrs = ''
+		// let stringAttrs = ''
 		const attrs = [
 			{el: 'class', value: domElement.getAttribute('class')},
 			{el: 'style', value: domElement.getAttribute('style')},
@@ -39,7 +40,10 @@ form.addEventListener('submit', ev => {
 			if (item.value !== null && item.value.length && item.value.indexOf('wheel-img') === -1) {
 				pic.setAttribute(item.el, item.value)
 
-				stringAttrs += `${item.el}="${item.value}" `
+				// stringAttrs += `${item.el}="${item.value}" `
+
+				// удаляем все элементы у исходной картинки
+				domElement.removeAttribute(item.el)
 			}
 		})
 
@@ -47,9 +51,11 @@ form.addEventListener('submit', ev => {
 		const webpSrc = inputValue.length 
 			? `${inputValue}/${src.slice(0, -typeLength).split('/').pop()}.webp` 
 			: `${src.slice(0, -typeLength)}.webp`
+
 		console.log('webp src:', webpSrc);
 		
-		pic.innerHTML = `<source srcset="${webpSrc}" type="image/webp" ${stringAttrs}>`
+		// pic.innerHTML = `<source srcset="${webpSrc}" type="image/webp" ${stringAttrs}>`
+		pic.innerHTML = `<source srcset="${webpSrc}" type="image/webp">`
 		pic.innerHTML += domElement.outerHTML
 
 		__temp_index_content = __temp_index_content.replaceAll(img, pic.outerHTML)
