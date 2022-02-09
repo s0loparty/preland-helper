@@ -15,7 +15,6 @@ form.addEventListener('submit', ev => {
 
 	if (!indexContent.length) return console.warn('Пустое поле инпута')
 	if (!allImages) return console.warn('Не нашелся тег <img />')
-
 	if (allPictures) alert('Осторожно! В шаблоне уже есть теги picture')
 
 	allImages.some(img => {
@@ -64,8 +63,8 @@ form.addEventListener('submit', ev => {
 
 input.addEventListener('input', ({ target }) => inputValue = target.value)
 
-function strToDom(str) {
+function strToDom(str, tag = 'img') {
 	let parser = new DOMParser()
 	let doc = parser.parseFromString(str, 'text/html')
-	return doc.body.querySelector('img')
+	return doc.body.querySelector(tag)
 }
