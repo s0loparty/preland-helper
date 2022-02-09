@@ -1,5 +1,8 @@
+const input = document.querySelector('input')
 const form = document.querySelector('form')
 const res = document.querySelector('#results')
+
+let inputValue = ''
 
 form.addEventListener('submit', ev => {
 	ev.preventDefault()
@@ -25,7 +28,12 @@ form.addEventListener('submit', ev => {
 		const alt = domElement.getAttribute('alt') ? `alt="${domElement.getAttribute('alt')}"` : ''
 
 		const typeLength = src.split('.').pop().length + 1
-		pic.innerHTML = `<source srcset="${src.slice(0, -typeLength)}.webp" type="image/webp" ${classes} ${style} ${w} ${h} ${alt}>`
+		const webpSrc = inputValue.length 
+			? `${inputValue}/${src.slice(0, -typeLength).split('/').pop()}.webp` 
+			: `${src.slice(0, -typeLength)}.webp`
+		console.log(webpSrc);
+		
+		pic.innerHTML = `<source srcset="${webpSrc}" type="image/webp" ${classes} ${style} ${w} ${h} ${alt}>`
 		pic.innerHTML += img
 
 		__temp_index_content = __temp_index_content.replaceAll(img, pic.outerHTML)
@@ -36,6 +44,8 @@ form.addEventListener('submit', ev => {
 
 	res.value = __temp_index_content
 })
+
+input.addEventListener('input', ({ target }) => inputValue = target.value)
 
 function strToDom(str) {
 	let parser = new DOMParser()
