@@ -8,13 +8,15 @@ form.addEventListener('submit', ev => {
 	ev.preventDefault()
 
 	const indexContent = ev.target[0].value
-	// const allImages = indexContent.match(/<img.*?>/g)
 	const allImages = indexContent.match(/<img(.*?)([\s\S]*?)>/g)
+	const allPictures = indexContent.match(/<picture.*?>/g)
 
 	let __temp_index_content = indexContent
 
 	if (!indexContent.length) return console.warn('Пустое поле инпута')
 	if (!allImages) return console.warn('Не нашелся тег <img />')
+
+	if (allPictures) alert('Осторожно! В шаблоне уже есть теги picture')
 
 	allImages.some(img => {
 		const pic = document.createElement('picture')
