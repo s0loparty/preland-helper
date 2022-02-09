@@ -23,6 +23,7 @@ form.addEventListener('submit', ev => {
 		console.log('domElement: ', domElement);
 
 		if (domElement.src.split('.').pop().indexOf('svg') !== -1) return
+		if (domElement.src.split('.').pop().indexOf('gif') !== -1) return
 		if (domElement.dataset.meowmeow) return
 		domElement.dataset.meowmeow = true
 
