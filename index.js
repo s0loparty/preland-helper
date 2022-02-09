@@ -8,7 +8,8 @@ form.addEventListener('submit', ev => {
 	ev.preventDefault()
 
 	const indexContent = ev.target[0].value
-	const allImages = indexContent.match(/<img.*?>/g)
+	// const allImages = indexContent.match(/<img.*?>/g)
+	const allImages = indexContent.match(/<img(.*)([\s\S]*?)>/g)
 
 	let __temp_index_content = indexContent
 
