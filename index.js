@@ -15,18 +15,15 @@ form.addEventListener('submit', ev => {
 	if (!indexContent.length) return console.warn('Пустое поле инпута')
 	if (!allImages) return console.warn('Не нашелся тег <img />')
 
-	allImages.forEach(img => {
+	allImages.some(img => {
 		const pic = document.createElement('picture')
 		const domElement = strToDom(img)
 		console.log('domElement: ', domElement);
 
-		const src = domElement.getAttribute('src')
-		// const classes = domElement.getAttribute('class') ? `class="${domElement.getAttribute('class')}"` : ''
-		// const style = domElement.getAttribute('style') ? `style="${domElement.getAttribute('style')}"` : ''
-		// const w = domElement.getAttribute('width') ? `width="${domElement.getAttribute('width')}"` : ''
-		// const h = domElement.getAttribute('height') ? `height="${domElement.getAttribute('height')}"` : ''
-		// const alt = domElement.getAttribute('alt') ? `alt="${domElement.getAttribute('alt')}"` : ''
+		if (domElement.dataset.meowmeow) return
+		domElement.dataset.meowmeow = true
 
+		const src = domElement.getAttribute('src')
 		let stringAttrs = ''
 		const attrs = [
 			{el: 'class', value: domElement.getAttribute('class')},
@@ -51,7 +48,7 @@ form.addEventListener('submit', ev => {
 		console.log('webp src:', webpSrc);
 		
 		pic.innerHTML = `<source srcset="${webpSrc}" type="image/webp" ${stringAttrs}>`
-		pic.innerHTML += img
+		pic.innerHTML += domElement.outerHTML
 
 		__temp_index_content = __temp_index_content.replaceAll(img, pic.outerHTML)
 
