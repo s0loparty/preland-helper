@@ -15,16 +15,17 @@ form.addEventListener('submit', ev => {
 
 	if (!indexContent.length) return console.warn('Пустое поле инпута')
 	if (!allImages) return console.warn('Не нашелся тег <img />')
+	if (allPictures) alert('Осторожно! В шаблоне уже есть <picture>!')
 
 	// добавляем data-meowmeow ко всем img внутри всех существующих picture
-	if (allPictures) {
-		allPictures.forEach(pic => {
-			const elementPic = strToDom(pic, 'picture')
-			elementPic.querySelector('img').dataset.meowmeow = 'true'
+	// if (allPictures) {
+	// 	allPictures.forEach(pic => {
+	// 		const elementPic = strToDom(pic, 'picture')
+	// 		elementPic.querySelector('img').dataset.meowmeow = 'true'
 
-			__temp_index_content = __temp_index_content.replaceAll(pic, elementPic.outerHTML)
-		})
-	}
+	// 		__temp_index_content = __temp_index_content.replaceAll(pic, elementPic.outerHTML)
+	// 	})
+	// }
 
 	allImages.some(img => {
 		const pic = document.createElement('picture')
