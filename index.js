@@ -17,12 +17,14 @@ form.addEventListener('submit', ev => {
 	if (!allImages) return console.warn('Не нашелся тег <img />')
 
 	// добавляем data-meowmeow ко всем img внутри всех существующих picture
-	allPictures.forEach(pic => {
-		const elementPic = strToDom(pic, 'picture')
-		elementPic.querySelector('img').dataset.meowmeow = 'true'
+	if (allPictures) {
+		allPictures.forEach(pic => {
+			const elementPic = strToDom(pic, 'picture')
+			elementPic.querySelector('img').dataset.meowmeow = 'true'
 
-		__temp_index_content = __temp_index_content.replaceAll(pic, elementPic.outerHTML)
-	})
+			__temp_index_content = __temp_index_content.replaceAll(pic, elementPic.outerHTML)
+		})
+	}
 
 	allImages.some(img => {
 		const pic = document.createElement('picture')
