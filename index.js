@@ -9,26 +9,33 @@ form.addEventListener('submit', ev => {
 
 	const indexContent = ev.target[0].value
 	const allImages = indexContent.match(/<img(.*?)([\s\S]*?)>/g)
-	const allPictures = indexContent.match(/<picture.*?>/g)
+	const allPictures = indexContent.match(/<picture(.*?)([\s\S]*?)><\/picture>/g)
 
 	let __temp_index_content = indexContent
 
 	if (!indexContent.length) return console.warn('Пустое поле инпута')
 	if (!allImages) return console.warn('Не нашелся тег <img />')
-	if (allPictures) alert('Осторожно! В шаблоне уже есть теги picture')
+
+	// добавляем data-meowmeow ко всем img внутри всех существующих picture
+	allPictures.forEach(pic => {
+		const elementPic = strToDom(pic, 'picture')
+		elementPic.querySelector('img').dataset.meowmeow = 'true'
+
+		__temp_index_content = __temp_index_content.replaceAll(pic, elementPic.outerHTML)
+	})
 
 	allImages.some(img => {
 		const pic = document.createElement('picture')
 		const domElement = strToDom(img)
-		console.log('domElement: ', domElement);
 
-		if (!domElement) return
+		if (!domElement || domElement.dataset.meowmeow) return
 		if (
 			domElement.src.split('.').pop().indexOf('svg') !== -1 || 
 			domElement.src.split('.').pop().indexOf('gif') !== -1
 		) return
 
-		if (domElement.dataset.meowmeow) return
+		console.log('domElement: ', domElement);
+
 		domElement.dataset.meowmeow = true
 
 		const src = domElement.getAttribute('src')
