@@ -35,7 +35,8 @@ form.addEventListener('submit', ev => {
 			if (!domElement || domElement.dataset.meowmeow) return
 			if (
 				domElement.src.split('.').pop().indexOf('svg') !== -1 || 
-				domElement.src.split('.').pop().indexOf('gif') !== -1
+				domElement.src.split('.').pop().indexOf('gif') !== -1 ||
+				domElement.src.split('.').pop().indexOf('webp') !== -1
 			) return
 
 			console.log('domElement: ', domElement);
