@@ -32,15 +32,19 @@ form.addEventListener('submit', ev => {
 			const pic = document.createElement('picture')
 			const domElement = strToDom(img)
 
-			if (!domElement || domElement.dataset.meowmeow) return
 			if (
 				domElement.src.split('.').pop().indexOf('svg') !== -1 || 
 				domElement.src.split('.').pop().indexOf('gif') !== -1 ||
 				domElement.src.split('.').pop().indexOf('webp') !== -1
 			) return
 
-			console.log('domElement: ', domElement);
 
+			if (domElement.getAttribute('class')?.includes('wheel') || domElement?.getAttribute('src')?.includes('wheel')) {
+				return console.error('its maybe >wheel<', domElement)
+			}
+
+			if (!domElement || domElement.dataset.meowmeow) return
+			
 			domElement.dataset.meowmeow = true
 
 			const src = domElement.getAttribute('src')
@@ -54,7 +58,7 @@ form.addEventListener('submit', ev => {
 			]
 
 			attrs.forEach(item => {
-				if (item.value !== null && item.value.length && item.value.indexOf('wheel-img') === -1) {
+				if (item.value !== null && item.value.length) {
 					pic.setAttribute(item.el, item.value)
 
 					stringAttrs += `${item.el}="${item.value}" `
