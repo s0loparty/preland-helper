@@ -54,6 +54,7 @@ form.addEventListener('submit', ev => {
 	if (replaceHash.checked) {
 		const allLinks = __temp_index_content.match(/<a(.*?)([\s\S]*?)>([\s\S]*?)<\/a>/g)
 
+		if (!allLinks) return
 		allLinks.forEach(link => {
 			const elementLink = strToDOM(link, 'a')
 			
@@ -69,84 +70,80 @@ form.addEventListener('submit', ev => {
 		})
 	}
 
-	// setTimeout(() => {
-		try {
-			allImages.some(img => {
-				const pic = document.createElement('picture')
-				const domElement = strToDOM(img)
+	try {
+		allImages.some(img => {
+			const pic = document.createElement('picture')
+			const domElement = strToDOM(img)
 
-				if (
-					domElement.src
-						.split('.')
-						.pop()
-						.indexOf('svg') !== -1 ||
-					domElement.src
-						.split('.')
-						.pop()
-						.indexOf('gif') !== -1 ||
-					domElement.src
-						.split('.')
-						.pop()
-						.indexOf('webp') !== -1
-				)
-					return
+			if (
+				domElement.src
+					.split('.')
+					.pop()
+					.indexOf('svg') !== -1 ||
+				domElement.src
+					.split('.')
+					.pop()
+					.indexOf('gif') !== -1 ||
+				domElement.src
+					.split('.')
+					.pop()
+					.indexOf('webp') !== -1
+			)
+				return
 
-				if (
-					domElement.getAttribute('class')?.includes('wheel') ||
-					domElement?.getAttribute('src')?.includes('wheel')
-				) {
-					return console.error('its maybe >wheel<', domElement)
+			if (
+				domElement.getAttribute('class')?.includes('wheel') ||
+				domElement?.getAttribute('src')?.includes('wheel')
+			) {
+				return console.error('its maybe >wheel<', domElement)
+			}
+
+			if (!domElement || domElement.dataset.meowmeow) return
+
+			domElement.dataset.meowmeow = true
+
+			const src = domElement.getAttribute('src')
+			let stringAttrs = ''
+			const attrs = [
+				{ el: 'class', value: domElement.getAttribute('class') },
+				{ el: 'style', value: domElement.getAttribute('style') },
+				{ el: 'width', value: domElement.getAttribute('width') },
+				{ el: 'height', value: domElement.getAttribute('height') },
+				{ el: 'alt', value: domElement.getAttribute('alt') }
+			]
+
+			attrs.forEach(item => {
+				if (item.value !== null && item.value.length) {
+					pic.setAttribute(item.el, item.value)
+
+					stringAttrs += `${item.el}="${item.value}" `
 				}
-
-				if (!domElement || domElement.dataset.meowmeow) return
-
-				domElement.dataset.meowmeow = true
-
-				const src = domElement.getAttribute('src')
-				let stringAttrs = ''
-				const attrs = [
-					{ el: 'class', value: domElement.getAttribute('class') },
-					{ el: 'style', value: domElement.getAttribute('style') },
-					{ el: 'width', value: domElement.getAttribute('width') },
-					{ el: 'height', value: domElement.getAttribute('height') },
-					{ el: 'alt', value: domElement.getAttribute('alt') }
-				]
-
-				attrs.forEach(item => {
-					if (item.value !== null && item.value.length) {
-						pic.setAttribute(item.el, item.value)
-
-						stringAttrs += `${item.el}="${item.value}" `
-					}
-				})
-
-				const typeLength = src.split('.').pop().length + 1
-				const webpSrc = inputValue.length
-					? `${inputValue}/${src
-							.slice(0, -typeLength)
-							.split('/')
-							.pop()}.webp`
-					: `${src.slice(0, -typeLength)}.webp`
-
-				// console.log('webp src:', webpSrc)
-
-				pic.innerHTML = `<source srcset="${webpSrc}" type="image/webp" ${stringAttrs}>`
-				pic.innerHTML += domElement.outerHTML
-
-				__temp_index_content = __temp_index_content.replaceAll(img, pic.outerHTML)
-
-				// console.log(pic);
-				// console.log('=================');
 			})
-		} catch (error) {
-			createToast(error + '<hr class="my-1"><b>Check error in console</b>', 'danger')
-			console.log(error)
-		}
 
-		res.value = __temp_index_content
-		// document.querySelector('code').innerText = __temp_index_content
-		hljs.highlightElement(document.querySelector('#results'))
-	// }, 0)
+			const typeLength = src.split('.').pop().length + 1
+			const webpSrc = inputValue.length
+				? `${inputValue}/${src
+						.slice(0, -typeLength)
+						.split('/')
+						.pop()}.webp`
+				: `${src.slice(0, -typeLength)}.webp`
+
+			// console.log('webp src:', webpSrc)
+
+			pic.innerHTML = `<source srcset="${webpSrc}" type="image/webp" ${stringAttrs}>`
+			pic.innerHTML += domElement.outerHTML
+
+			__temp_index_content = __temp_index_content.replaceAll(img, pic.outerHTML)
+
+			// console.log(pic);
+			// console.log('=================');
+		})
+	} catch (error) {
+		createToast(error + '<hr class="my-1"><b>Check error in console</b>', 'danger')
+		console.log(error)
+	}
+
+	res.value = __temp_index_content
 })
 
 const createToast = (text, type = 'primary') => {

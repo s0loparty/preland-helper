@@ -1,11 +1,13 @@
 body {
-    background: var(--bs-gray-200);
+	background: var(--bs-gray-200);
 }
-.inner-code textarea, .output-code textarea {
-    min-height: 50vh;
+
+.inner-code textarea,
+.output-code textarea {
+	min-height: 50vh;
 }
 
 /* bootstrap */
 .toast.bg-warning {
-   color: #000 !important;
+	color: #000 !important;
 }
