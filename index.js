@@ -63,8 +63,9 @@ form.addEventListener('submit', ev => {
 			} else {
 				elementLink.setAttribute('href', '#roulette')
 			}
-
-			elementLink.removeAttribute('target')
+			if (elementLink.getAttribute('target')) {
+				elementLink.removeAttribute('target')
+			}
 
 			__temp_index_content = __temp_index_content.replaceAll(link, elementLink.outerHTML)
 		})
