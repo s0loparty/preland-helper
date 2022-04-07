@@ -51,25 +51,25 @@ form.addEventListener('submit', ev => {
 
 	// заменяем хэш/якорь в ссылках
 	// удаляем target="..."
-	if (replaceHash.checked) {
-		const allLinks = __temp_index_content.match(/<a(.*?)([\s\S]*?)>([\s\S]*?)<\/a>/g)
+	// if (replaceHash.checked) {
+	// 	const allLinks = __temp_index_content.match(/<a(.*?)([\s\S]*?)>([\s\S]*?)<\/a>/g)
 
-		if (!allLinks) return
-		allLinks.forEach(link => {
-			const elementLink = strToDOM(link, 'a')
+	// 	if (!allLinks) return
+	// 	allLinks.forEach(link => {
+	// 		const elementLink = strToDOM(link, 'a')
 			
-			if (elementLink.getAttribute('href')) {
-				elementLink.href = '#roulette'
-			} else {
-				elementLink.setAttribute('href', '#roulette')
-			}
-			if (elementLink.getAttribute('target')) {
-				elementLink.removeAttribute('target')
-			}
+	// 		if (elementLink.getAttribute('href')) {
+	// 			elementLink.href = '#roulette'
+	// 		} else {
+	// 			elementLink.setAttribute('href', '#roulette')
+	// 		}
+	// 		if (elementLink.getAttribute('target')) {
+	// 			elementLink.removeAttribute('target')
+	// 		}
 
-			__temp_index_content = __temp_index_content.replaceAll(link, elementLink.outerHTML)
-		})
-	}
+	// 		__temp_index_content = __temp_index_content.replace(link, elementLink.outerHTML)
+	// 	})
+	// }
 
 	try {
 		allImages.some(img => {
