@@ -121,6 +121,10 @@ form.addEventListener('submit', ev => {
 				}
 			})
 
+			if (!src) {
+				return createToast('Нет атрибута src ' + domElement, 'danger')
+			}
+			
 			const typeLength = src.split('.').pop().length + 1
 			const webpSrc = inputValue.length
 				? `${inputValue}/${src
