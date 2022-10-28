@@ -122,7 +122,9 @@ form.addEventListener('submit', ev => {
 			})
 
 			if (!src) {
-				return createToast('В каком то < img > нет атрибута src', 'danger')
+				console.log('Problem here(domElement):', domElement);
+				createToast('В каком то < img > нет атрибута src', 'danger')
+				throw 'Problem here(domElement): ' + domElement
 			}
 
 			const typeLength = src.split('.').pop().length + 1
