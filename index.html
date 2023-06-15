@@ -1,35 +1,118 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 
 <head>
 	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>preland helper</title>
-	<link rel="stylesheet" href="./main.css">
+	<title>helper 2.0</title>
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+	<style>
+		.textarea-wrap {
+			position: relative;
+		}
+		.textarea-wrap.loading::after {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+
+			content: 'Wait...';
+
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			background-color: #ffffffe8;
+			font-size: 2rem;
+		}
+	</style>
 </head>
 
-<body>
-	<div class="custom-path">
-		<label>Кастомный путь для webp от корня, если нужно</label>
-		<input type="text" placeholder="ex: webp">
+<body class="py-4 bg-light">
+	<div class="container">
+		<div class="row row-gap-4">
+			<div class="col-12 col-lg-8">
+				<div class="card shadow border-0">
+					<div class="card-body">
+						<label for="textareaCode" class="form-label">Input code</label>
+						<div class="textarea-wrap">
+							<textarea class="form-control" id="textareaCode" rows="5" style="min-height: 70vh;">
+								<picture>
+									<source srcset="img.webp" type="image/webp">
+									<source srcset="img.jpg" type="image/jpeg"> 
+									<img src="img.jpg">
+								</picture>
+
+								<img src="img.jpg" class="asd" style="display: block;" lazy="load">
+								<img src="img.gif" class="asd" style="display: block;" lazy="load">
+								<img src="img.png" class="asd" style="display: block;" lazy="load">
+								<img src="" class="asd" style="display: block;" lazy="load">
+								<img class="asd" style="display: block;" lazy="load">
+							</textarea>
+							<button class="btn btn-success mt-3" id="btnCopy">Скопировать</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-12 col-lg-4 order-first order-lg-last">
+				<div class="card shadow border-0">
+					<div class="card-body">
+						<form id="formMain">
+
+							<!-- offer name -->
+							<div class="mb-3">
+								<strong>Изменить название оффера</strong>
+								<div class="row">
+									<div class="col-lg-6">
+										<label for="inputOfferNameOld" class="form-label">Старое</label>
+										<input type="text" class="form-control" id="inputOfferNameOld">
+									</div>
+									<div class="col-lg-6">
+										<label for="inputOfferNameNew" class="form-label">Новое</label>
+										<input type="text" class="form-control" id="inputOfferNameNew">
+									</div>
+								</div>
+								<small class="text-small">Замены не будет если оставить пустым</small>
+							</div>
+							<hr>
+
+							<!-- hash -->
+							<div class="mb-3">
+								<label for="newLinkHash" class="form-label">
+									<strong>Новый # для ссылок (без #)</strong>
+								</label>
+								<input type="text" class="form-control" id="newLinkHash">
+								<small class="text-small">Замены не будет если оставить пустым</small>
+							</div>
+							<hr>
+
+							<!-- link 'target' attribute -->
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" value="" id="removeLinkTarget" checked>
+								<label class="form-check-label" for="removeLinkTarget">Удалить target у всех ссылок</label>
+							</div>
+							<hr>
+
+							<!-- convert IMG to PICTURE -->
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" value="" id="convertImgToPicture">
+								<label class="form-check-label" for="convertImgToPicture">Заменить img на picture</label>
+							</div>
+							<hr class="mb-5">
+
+							<button class="btn btn-primary" type="submit">Convert</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-	<main>
-		<div class="output-code">
-			<label for="outputCode">output code</label>
-			<textarea id="results"></textarea>
-		</div>
 
-		<div class="inner-code">
-			<form>
-				<label for="innerCode">input code</label>
-				<textarea id="innerCode"></textarea>
-				<button>generate</button>
-			</form>
-		</div>
-	</main>
-
-	<script src="./index.js"></script>
+	<script src="./index.js" type="module"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

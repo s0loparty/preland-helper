@@ -1,94 +1,176 @@
-const input = document.querySelector('input')
-const form = document.querySelector('form')
-const res = document.querySelector('#results')
+import stringParser from './stringToElements.js'
 
-let inputValue = ''
+const FORM_MAIN = document.querySelector('#formMain')
+const BTN_COPY = document.querySelector('#btnCopy')
 
-form.addEventListener('submit', ev => {
-	ev.preventDefault()
+function main() {
+	const INPUT_LINK_HASH = document.querySelector('#newLinkHash')
+	const INPUT_OFFER_NAME_OLD = document.querySelector('#inputOfferNameOld')
+	const INPUT_OFFER_NAME_NEW = document.querySelector('#inputOfferNameNew')
+	const CHECKBOX_REMOVE_LINK_TARGET = document.querySelector('#removeLinkTarget')
+	const CHECKBOX_CONVERT_IMG_TO_PIC = document.querySelector('#convertImgToPicture')
+	const TEXTAREA_CODE = document.querySelector('#textareaCode')
+	const TEXTAREA_WRAP = document.querySelector('.textarea-wrap')
 
-	const indexContent = ev.target[0].value
-	const allImages = indexContent.match(/<img(.*?)([\s\S]*?)>/g)
-	const allPictures = indexContent.match(/<picture(.*?)([\s\S]*?)>([\s\S]*?)<\/picture>/g)
+	// FUNC
+	function run() {
+		// пустой textarea
+		if (!TEXTAREA_CODE.value.length) {
+			return alert('InputCode is empty!')
+		}
 
-	let __temp_index_content = indexContent
+		TEXTAREA_WRAP.classList.add('loading')
 
-	if (!indexContent.length) return console.warn('Пустое поле инпута')
-	if (!allImages) return console.warn('Не нашелся тег <img />')
-	if (allPictures) alert('Осторожно! В шаблоне уже есть <picture>!')
-
-	// добавляем data-meowmeow ко всем img внутри всех существующих picture
-	if (allPictures) {
-		allPictures.forEach(pic => {
-			const elementPic = strToDom(pic, 'picture')
-			elementPic.querySelector('img').dataset.meowmeow = 'true'
-
-			__temp_index_content = __temp_index_content.replaceAll(pic, elementPic.outerHTML)
-		})
-	}
-
-	setTimeout(() => {
-		allImages.some(img => {
-			const pic = document.createElement('picture')
-			const domElement = strToDom(img)
-
-			if (
-				domElement.src.split('.').pop().indexOf('svg') !== -1 || 
-				domElement.src.split('.').pop().indexOf('gif') !== -1 ||
-				domElement.src.split('.').pop().indexOf('webp') !== -1
-			) return
-
-
-			if (domElement.getAttribute('class')?.includes('wheel') || domElement?.getAttribute('src')?.includes('wheel')) {
-				return console.error('its maybe >wheel<', domElement)
+		setTimeout(() => {
+			// заменить название оффера
+			if (INPUT_OFFER_NAME_OLD.value.length && INPUT_OFFER_NAME_NEW.value.length) {
+				TEXTAREA_CODE.value = replaceWords(TEXTAREA_CODE.value)
 			}
 
-			if (!domElement || domElement.dataset.meowmeow) return
+			// замены #hash
+			if (INPUT_LINK_HASH.value.length) {
+				TEXTAREA_CODE.value = replaceHashLinks(TEXTAREA_CODE.value)
+			}
+
+			if (CHECKBOX_CONVERT_IMG_TO_PIC.checked) {
+				TEXTAREA_CODE.value = replaceImgTag(TEXTAREA_CODE.value)
+			}
+
+			TEXTAREA_WRAP.classList.remove('loading')
+		}, 2000)
+	}
+
+	// заменить hash ссылок, удалить target
+	function replaceHashLinks(text = '') {
+		const re = /<a\b[^>]*>([\s\S]*?)<\/a>/gmi
+		const elements = text.match(re) ? [...new Set(text.match(re))] : []
 			
-			domElement.dataset.meowmeow = true
+		elements.forEach(el => {
+			const replacedElement = stringParser(el, 'a')
+			replacedElement.setAttribute('href', `#${INPUT_LINK_HASH.value}`)
 
-			const src = domElement.getAttribute('src')
-			let stringAttrs = ''
-			const attrs = [
-				{el: 'class', value: domElement.getAttribute('class')},
-				{el: 'style', value: domElement.getAttribute('style')},
-				{el: 'width', value: domElement.getAttribute('width')},
-				{el: 'height', value: domElement.getAttribute('height')},
-				{el: 'alt', value: domElement.getAttribute('alt')}
-			]
+			if (CHECKBOX_REMOVE_LINK_TARGET.checked) {
+				replacedElement.removeAttribute('target')
+			}
 
-			attrs.forEach(item => {
-				if (item.value !== null && item.value.length) {
-					pic.setAttribute(item.el, item.value)
+			text = text.replaceAll(el, replacedElement.outerHTML)
+		})
+	
+		return text
+	}
 
-					stringAttrs += `${item.el}="${item.value}" `
-				}
-			})
+	// заменить названия оффера
+	function replaceWords(text = '') {
+		// если название оффера из нескольктх слов
+		const query = (INPUT_OFFER_NAME_OLD.value.split(' ').length > 1) 
+			? INPUT_OFFER_NAME_OLD.value.split(' ').join('\n').replaceAll('\t', '')
+			: INPUT_OFFER_NAME_OLD.value
 
-			const typeLength = src.split('.').pop().length + 1
-			const webpSrc = inputValue.length 
-				? `${inputValue}/${src.slice(0, -typeLength).split('/').pop()}.webp` 
-				: `${src.slice(0, -typeLength)}.webp`
+		const re = new RegExp(query.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&").split("\n").join("\\s+"), "gi");
 
-			console.log('webp src:', webpSrc)
-			
-			pic.innerHTML = `<source srcset="${webpSrc}" type="image/webp" ${stringAttrs}>`
-			pic.innerHTML += domElement.outerHTML
+		const elements = text.match(re) ? [...new Set(text.match(re))] : []
 
-			__temp_index_content = __temp_index_content.replaceAll(img, pic.outerHTML)
+		console.log(elements);
 
-			console.log(pic);
-			console.log('=================');
+		elements.forEach(item => {
+			text = text.replaceAll(item, INPUT_OFFER_NAME_NEW.value)
 		})
 
-		res.value = __temp_index_content
-	}, 0)
+		return text
+	}
+
+	// заменяем IMG на PICTURE
+	function replaceImgTag(text = '') {
+
+		// поиск существующих тэгов picture
+		// и добавление к ним атрибута meowmeow
+		const re = /<picture\b[^>]*>([\s\S]*?)<\/picture>/gi;
+		const elements = text.match(re) ? [...new Set(text.match(re))] : []
+
+		if (elements.length) {
+			elements.forEach(item => {
+				const pic = stringParser(item, 'picture')
+				const innerImg = pic.querySelector('img')
+
+				innerImg.dataset.meowmeow = true
+				text = text.replaceAll(item, pic.outerHTML)
+			})
+		}
+
+
+		// замена всех img на picture
+		const regexp = /<img\b((?!\bdata-meowmeow\b)[^>]*)>/gi;
+		const imgElements = text.match(regexp) ? [...new Set(text.match(regexp))] : []
+		
+		try {
+			imgElements.some(element => {
+				const img = stringParser(element, 'img')
+				const newPicture = document.createElement('picture')
+				const continueAttrs = [img.getAttribute('class'), img.getAttribute('src')];
+
+
+
+				// какие то проверки
+				if ((!img || img.dataset.meowmeow) || continueAttrs.some(i => i.includes('wheel'))) {
+					return
+				}
+
+
+
+				// выборка атрибутов
+				const src = img.getAttribute('src')
+				if (!src) {
+					throw 'replaceImgTag: attribute "src" is empty - ' + img.outerHTML
+				}
+
+				let stringAttrs = ''
+				const attrs = [
+					{ el: 'class', value: img.getAttribute('class') },
+					{ el: 'style', value: img.getAttribute('style') },
+					{ el: 'width', value: img.getAttribute('width') },
+					{ el: 'height', value: img.getAttribute('height') },
+					{ el: 'alt', value: img.getAttribute('alt') }
+				]
+
+				const typeLength = src.split('.').pop().length + 1
+				const webpSrc = `${src.slice(0, -typeLength)}.webp`
+
+				// добавление атрибутов
+				attrs.forEach(item => {
+					if (item.value !== null && item.value.length) {
+						newPicture.setAttribute(item.el, item.value)
+
+						stringAttrs += `${item.el}="${item.value}" `
+					}
+				})
+
+				img.dataset.meowmeow = true
+
+				newPicture.innerHTML += `<source srcset="${webpSrc}" type="image/webp" ${stringAttrs}>`
+				newPicture.innerHTML += img.outerHTML
+
+				text = text.replaceAll(element, newPicture.outerHTML)
+			})
+		} catch (error) {
+			console.warn(error)
+		}
+
+		return text
+	}
+
+
+	run()
+}
+
+FORM_MAIN.addEventListener('submit', ev => {
+	ev.preventDefault()
+	main()
 })
 
-input.addEventListener('input', ({ target }) => inputValue = target.value)
 
-function strToDom(str, tag = 'img') {
-	let parser = new DOMParser()
-	let doc = parser.parseFromString(str, 'text/html')
-	return doc.body.querySelector(tag)
-}
+BTN_COPY.addEventListener('click', () => {
+	const textareaCode = document.querySelector('#textareaCode')
+	textareaCode.select()
+	textareaCode.setSelectionRange(0, 99999)
+	navigator.clipboard.writeText(textareaCode.value)
+})
