@@ -111,7 +111,7 @@ function main() {
 
 
 				// какие то проверки
-				if ((!img || img.dataset.meowmeow) || continueAttrs.some(i => i.includes('wheel'))) {
+				if ((!img || img.dataset.meowmeow) || continueAttrs.some(i => i && i.includes('wheel'))) {
 					return
 				}
 
