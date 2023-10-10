@@ -81,8 +81,7 @@ function main() {
 
 	// заменяем IMG на PICTURE
 	function replaceImgTag(text = '') {
-
-		// поиск существующих тэгов picture
+		// поиск существующих тегов picture
 		// и добавление к ним атрибута meowmeow
 		const re = /<picture\b[^>]*>([\s\S]*?)<\/picture>/gi;
 		const elements = text.match(re) ? [...new Set(text.match(re))] : []
@@ -115,6 +114,10 @@ function main() {
 					return
 				}
 
+
+				// удаление атрибутов связанных с pagespeed
+				img.removeAttribute('data-pagespeed-lsc-url')
+				img.removeAttribute('data-pagespeed-url-hash')
 
 
 				// выборка атрибутов
@@ -171,6 +174,6 @@ FORM_MAIN.addEventListener('submit', ev => {
 BTN_COPY.addEventListener('click', () => {
 	const textareaCode = document.querySelector('#textareaCode')
 	textareaCode.select()
-	textareaCode.setSelectionRange(0, 99999)
+	textareaCode.setSelectionRange(0, 99999999)
 	navigator.clipboard.writeText(textareaCode.value)
 })
